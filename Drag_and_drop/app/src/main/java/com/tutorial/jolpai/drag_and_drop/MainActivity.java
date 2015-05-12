@@ -11,16 +11,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnTouchListener{
 
     private ImageView imageView;
     private static final String IMAGEVIEW_TAG = "Android Logo";
     private android.widget.RelativeLayout.LayoutParams layoutParams;
     String msg;
+
+    private final static int START_DRAGGING = 0;
+    private final static int STOP_DRAGGING = 1;
+
+    private Button btn;
+    private FrameLayout layout;
+    private int status;
+    private RadioGroup.LayoutParams params;
+
+    private ImageView image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,26 +43,15 @@ public class MainActivity extends Activity {
         imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setTag(IMAGEVIEW_TAG);
 
-    }
+        layout = (FrameLayout) findViewById(R.id.LinearLayout01);
+        // layout.setOnTouchListener(this);
 
+        btn = (Button) findViewById(R.id.btn);
+        btn.setDrawingCacheEnabled(true);
+        btn.setOnTouchListener(this);
 
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-            ClipData clipData = ClipData.newPlainText("", "");
-            View.DragShadowBuilder dsb = new View.DragShadowBuilder(view);
-            view.startDrag(clipData, dsb, view, 0);
-            view.setVisibility(View.INVISIBLE);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    @Override
-    protected  void onResume(){
-        super.onResume();
+        params = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT,
+                RadioGroup.LayoutParams.WRAP_CONTENT);
 
         imageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -74,11 +76,10 @@ public class MainActivity extends Activity {
         });
 
 
-        imageView.setOnDragListener( new View.OnDragListener(){
+        imageView.setOnDragListener(new View.OnDragListener() {
             @Override
-            public boolean onDrag(View v,  DragEvent event){
-                switch(event.getAction())
-                {
+            public boolean onDrag(View v, DragEvent event) {
+                switch (event.getAction()) {
                     case DragEvent.ACTION_DRAG_STARTED:
                         layoutParams = (RelativeLayout.LayoutParams)
                                 v.getLayoutParams();
@@ -90,7 +91,7 @@ public class MainActivity extends Activity {
                         int x_cord = (int) event.getX();
                         int y_cord = (int) event.getY();
                         break;
-                    case DragEvent.ACTION_DRAG_EXITED :
+                    case DragEvent.ACTION_DRAG_EXITED:
                         Log.d(msg, "Action is DragEvent.ACTION_DRAG_EXITED");
                         x_cord = (int) event.getX();
                         y_cord = (int) event.getY();
@@ -98,12 +99,12 @@ public class MainActivity extends Activity {
                         layoutParams.topMargin = y_cord;
                         v.setLayoutParams(layoutParams);
                         break;
-                    case DragEvent.ACTION_DRAG_LOCATION  :
+                    case DragEvent.ACTION_DRAG_LOCATION:
                         Log.d(msg, "Action is DragEvent.ACTION_DRAG_LOCATION");
                         x_cord = (int) event.getX();
                         y_cord = (int) event.getY();
                         break;
-                    case DragEvent.ACTION_DRAG_ENDED   :
+                    case DragEvent.ACTION_DRAG_ENDED:
                         Log.d(msg, "Action is DragEvent.ACTION_DRAG_ENDED");
                         // Do nothing
                         break;
@@ -111,11 +112,44 @@ public class MainActivity extends Activity {
                         Log.d(msg, "ACTION_DROP event");
                         // Do nothing
                         break;
-                    default: break;
+                    default:
+                        break;
                 }
                 return true;
             }
         });
+
+
+    }
+
+
+    @Override
+    public boolean onTouch(View view, MotionEvent me) {
+        if (me.getAction() == MotionEvent.ACTION_DOWN) {
+            status = START_DRAGGING;
+            image = new ImageView(this);
+            image.setImageBitmap(btn.getDrawingCache());
+            layout.addView(image, params);
+        }
+        if (me.getAction() == MotionEvent.ACTION_UP) {
+            status = STOP_DRAGGING;
+            Log.i("Drag", "Stopped Dragging");
+        } else if (me.getAction() == MotionEvent.ACTION_MOVE) {
+            if (status == START_DRAGGING) {
+                System.out.println("Dragging");
+                image.setPadding((int) me.getRawX(), (int) me.getRawY(), 0, 0);
+                image.invalidate();
+            }
+        }
+        return false;
+    }
+
+
+    @Override
+    protected  void onResume(){
+        super.onResume();
+
+
 
 
 
