@@ -3,6 +3,7 @@ package com.tutorial.jolpai.drag_and_drop;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -24,10 +26,10 @@ public class MainActivity extends Activity implements View.OnTouchListener{
     private static final String IMAGEVIEW_TAG = "Android Logo";
     private android.widget.RelativeLayout.LayoutParams layoutParams;
     String msg;
-
+    AbsoluteLayout aLayout;
     private final static int START_DRAGGING = 0;
     private final static int STOP_DRAGGING = 1;
-
+    ImageView img=null;
     private Button btn;
     private FrameLayout layout;
     private int status;
@@ -52,6 +54,10 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 
         params = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT,
                 RadioGroup.LayoutParams.WRAP_CONTENT);
+
+
+
+
 
         imageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

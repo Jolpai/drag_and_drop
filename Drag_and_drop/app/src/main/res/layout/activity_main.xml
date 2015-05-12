@@ -26,4 +26,17 @@
             android:text="Drag Me"></Button>
     </FrameLayout>
 
+
+    <AbsoluteLayout
+        android:id="@+id/absLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/drag_and_drop"></ImageView>
+    </AbsoluteLayout>
+
 </RelativeLayout>
